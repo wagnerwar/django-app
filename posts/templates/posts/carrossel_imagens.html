@@ -1,0 +1,47 @@
+{% extends "posts/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ carrossel.nome }}</h1>
+    
+    {% if imagens %}
+        <div id="carouselSlider" class="carousel slide mt-4" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-indicators">
+                {% for imagem in imagens %}
+                <button type="button" data-bs-target="#carouselSlider" data-bs-slide-to="{{ forloop.counter0 }}" 
+                        {% if forloop.first %}class="active" aria-current="true"{% endif %} 
+                        aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+            
+            <div class="carousel-inner">
+                {% for imagem in imagens %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ imagem.imagem.url }}" class="d-block w-100" alt="{{ imagem.titulo }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ imagem.titulo }}</h5>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselSlider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselSlider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+            </button>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4" role="alert">
+            Este carrossel não possui imagens no momento.
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{% url 'carrossel_lista' %}" class="btn btn-secondary">← Voltar para lista de carrosséis</a>
+    </div>
+</div>
+{% endblock %}

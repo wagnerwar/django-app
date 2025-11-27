@@ -1,0 +1,16 @@
+{% extends "posts/base.html" %}
+
+{% block title %}{{ pagina.titulo }}{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-12">
+      <h1>{{ pagina.titulo }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="container">
+      {{ pagina.conteudo|safe }}
+    </div>
+  </div>
+{% endblock %}

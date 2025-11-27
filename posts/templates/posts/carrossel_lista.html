@@ -1,0 +1,21 @@
+{% extends "posts/base.html" %}
+
+{% block title %}Carrosséis - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Carrosséis</h1>
+
+{% if carrosseis %}
+<div class="list-group">
+  {% for carrossel in carrosseis %}
+  <a href="{% url 'carrossel_imagens' carrossel.id %}" class="list-group-item list-group-item-action">
+    <h5 class="mb-1">{{ carrossel.nome }}</h5>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  Nenhum carrossel disponível no momento.
+</div>
+{% endif %}
+{% endblock %}
