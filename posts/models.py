@@ -1,9 +1,47 @@
 from django.db import models
 from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 from PIL import Image
 from io import BytesIO
 
 from ckeditor.fields import RichTextField
+
+
+# Validador de CPF
+def validar_cpf(cpf):
+    """
+    Valida se o CPF é válido segundo o algoritmo oficial.
+    Aceita CPF com ou sem formatação (pontos e traço).
+    """
+    # Remove caracteres não numéricos
+    cpf = ''.join(filter(str.isdigit, cpf))
+    
+    # Verifica se tem 11 dígitos
+    if len(cpf) != 11:
+        raise ValidationError('CPF deve conter 11 dígitos.')
+    
+    # Verifica se todos os dígitos são iguais (CPF inválido)
+    if cpf == cpf[0] * 11:
+        raise ValidationError('CPF inválido.')
+    
+    # Calcula o primeiro dígito verificador
+    soma = sum(int(cpf[i]) * (10 - i) for i in range(9))
+    resto = soma % 11
+    digito1 = 0 if resto < 2 else 11 - resto
+    
+    if int(cpf[9]) != digito1:
+        raise ValidationError('CPF inválido.')
+    
+    # Calcula o segundo dígito verificador
+    soma = sum(int(cpf[i]) * (11 - i) for i in range(10))
+    resto = soma % 11
+    digito2 = 0 if resto < 2 else 11 - resto
+    
+    if int(cpf[10]) != digito2:
+        raise ValidationError('CPF inválido.')
+    
+    return cpf
+
 
 # Create your models here.
 
@@ -131,3 +169,19 @@ class ImagemCarrossel(models.Model):
     
     def __str__(self):
         return f"{self.carrossel.nome} - {self.titulo}"
+
+
+# Modelo para Solicitações feitas via portal
+class Solicitacao(models.Model):
+    data = models.DateTimeField(auto_now_add=True, verbose_name="Data da Solicitação")
+    nome = models.CharField(max_length=200, verbose_name="Nome")
+    descricao = models.TextField(verbose_name="Descrição")
+    cpf = models.CharField(max_length=14, verbose_name="CPF", validators=[validar_cpf])
+    
+    class Meta:
+        verbose_name = "Solicitação"
+        verbose_name_plural = "Solicitações"
+        ordering = ['-data']
+    
+    def __str__(self):
+        return f"{self.nome} - {self.data.strftime('%d/%m/%Y %H:%M')}"

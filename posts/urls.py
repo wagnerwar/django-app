@@ -7,4 +7,5 @@ urlpatterns = [
     path("post/<int:post_id>", views.post_detail, name="post_detail"),
     path("carrosseis/", views.carrossel_lista, name="carrossel_lista"),
     path("carrossel/<int:carrossel_id>/imagens/", views.carrossel_imagens, name="carrossel_imagens"),
+    path("solicitacao/", views.solicitacao_form, name="solicitacao_form"),
 ]

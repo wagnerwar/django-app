@@ -1,9 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import Post, Pagina, Carrossel, ImagemCarrossel
+from .models import Post, Pagina, Carrossel, ImagemCarrossel, Solicitacao
+from .forms import SolicitacaoForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.contrib import messages
 
 # Create your views here.
 def index(request):
@@ -53,4 +55,21 @@ def carrossel_imagens(request, carrossel_id):
         "imagens": imagens
     }
     return render(request, "posts/carrossel_imagens.html", context)
+
+
+def solicitacao_form(request):
+    """Formulário para cadastrar uma nova solicitação"""
+    if request.method == 'POST':
+        form = SolicitacaoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Solicitação enviada com sucesso!')
+            return redirect('solicitacao_form')
+        else:
+            messages.error(request, 'Por favor, corrija os erros no formulário.')
+    else:
+        form = SolicitacaoForm()
+    
+    context = {'form': form}
+    return render(request, 'posts/solicitacao_form.html', context)
 
